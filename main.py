@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import requests
 url = 'https://github.com/SimplifyJobs/Summer2025-Internships'
 page = requests.get(url)
