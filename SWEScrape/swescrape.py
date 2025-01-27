@@ -5,7 +5,7 @@ import requests
 tag_dict_list = []
 def main():
     swe_job = SWEJobs()
-    swe_job.load_jobs("swe-data.json")
+    swe_job.load_jobs("swe-data")
 class SWEJobs:
     def load_jobs(self,json_path: str) -> []:
         url = 'https://github.com/SimplifyJobs/Summer2025-Internships'
@@ -23,7 +23,7 @@ class SWEJobs:
                         'Location': self.extract_location(new_tag),
                         'Date Posted': self.extract_text_value(new_tag, 5)}
             tag_dict_list.append(tag_dict)
-        with open(json_path, "w") as file:
+        with open(f"{json_path}.json", "w") as file:
             json.dump([dict(zip(d.keys(), d.values())) for d in tag_dict_list], file, indent=4)
     def extract_title(self,text):
         new_text = ''.join(re.split(r"</a[^>]*>|<a[^>]*>|<strong>|</strong>|</details>|<details>|", text))
