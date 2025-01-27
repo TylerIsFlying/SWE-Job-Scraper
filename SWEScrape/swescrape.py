@@ -16,12 +16,13 @@ class SWEJobs:
             new_tag = ''.join(re.split(
                 "<tr>|</tr>|<img[^>]*>|</img>|<summary>|</summary>|<td>|</td>|locations|<strong>|</strong>|",
                 str(tag)))
-            tag_dict = {'company': self.extract_title(new_tag),
-                        'url': self.extract_url(new_tag),
-                        'role': self.extract_text_value(new_tag, 2),
-                        'location': self.extract_location(new_tag),
-                        'date posted': self.extract_text_value(new_tag, 5)}
-            tag_dict_list.append(tag_dict)
+            if not '🔒' in  self.extract_text_value(new_tag, 4):
+                tag_dict = {'company': self.extract_title(new_tag),
+                            'url': self.extract_url(new_tag),
+                            'role': self.extract_text_value(new_tag, 2),
+                            'location': self.extract_location(new_tag),
+                            'date posted': self.extract_text_value(new_tag, 5)}
+                tag_dict_list.append(tag_dict)
         with open(f"{json_path}.json", "w") as file:
             json.dump([dict(zip(d.keys(), d.values())) for d in tag_dict_list], file, indent=4)
     def extract_title(self,text):
