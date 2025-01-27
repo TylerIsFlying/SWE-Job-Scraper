@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import json
 import re
 import requests
-tag_dict_list = []
 def main():
     swe_job = SWEJobs()
     swe_job.load_jobs("swe-data")
@@ -17,27 +16,27 @@ class SWEJobs:
             new_tag = ''.join(re.split(
                 "<tr>|</tr>|<img[^>]*>|</img>|<summary>|</summary>|<td>|</td>|locations|<strong>|</strong>|",
                 str(tag)))
-            tag_dict = {'Company': self.extract_title(new_tag),
-                        'URL': self.extract_url(new_tag),
-                        'Role': self.extract_text_value(new_tag, 2),
-                        'Location': self.extract_location(new_tag),
-                        'Date Posted': self.extract_text_value(new_tag, 5)}
+            tag_dict = {'company': self.extract_title(new_tag),
+                        'url': self.extract_url(new_tag),
+                        'role': self.extract_text_value(new_tag, 2),
+                        'location': self.extract_location(new_tag),
+                        'date posted': self.extract_text_value(new_tag, 5)}
             tag_dict_list.append(tag_dict)
         with open(f"{json_path}.json", "w") as file:
             json.dump([dict(zip(d.keys(), d.values())) for d in tag_dict_list], file, indent=4)
     def extract_title(self,text):
-        new_text = ''.join(re.split(r"</a[^>]*>|<a[^>]*>|<strong>|</strong>|</details>|<details>|", text))
+        new_text = ''.join(re.split(r"</a[^>]*>|<a[^>]*>|<strong>|</strong>|</details>|<details>|", text)).lower()
         if '↳' in new_text.split('\n')[1]:
-            return 'None'
+            return 'none'
         return new_text.split('\n')[1]
     def extract_url(self,text):
         new_text = re.findall(r'<a[^>]*href="([^" >#?]+)',text)
         return new_text
     def extract_text_value(self, text, index):
-        new_text = text
+        new_text = text.lower()
         return new_text.split('\n')[index]
     def extract_location(self,text):
-        new_text = ''.join(re.split("</a[^>]*>|<a[^>]*>|<strong>|</strong>|</details>|<details>|", text))
+        new_text = ''.join(re.split("</a[^>]*>|<a[^>]*>|<strong>|</strong>|</details>|<details>|", text)).lower()
         return re.split(r'<br\/>|,|\+',new_text.split('\n')[3])
 if __name__ == "__main__":
     main()
